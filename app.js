@@ -84,6 +84,17 @@ app.put("/posts/:id", function(req, res){
     });
 });
 
+//DESTROY ROUTE
+app.delete("/posts/:id", function(req, res){
+    Post.findByIdAndRemove(req.params.id, function(err){
+        if(err){
+            console.log(err);
+        } else{
+            res.redirect("/posts");
+        }
+    });
+});
+
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("Server is running!");
 });
