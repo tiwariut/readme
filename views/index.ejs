@@ -4,7 +4,7 @@
     <div>
         <h3><%= post.title %></h3>
         <img src="<%= post.image %>">
-        <h5> <%= post.created.toDateString %></h5>
+        <h5> <%= post.created.toDateString() %></h5>
         <p> <%= post.body.substring(0, 100) %>...</p>
     </div>
-<% } %>
+<% }); %>
