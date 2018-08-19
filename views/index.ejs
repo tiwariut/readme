@@ -1,14 +1,25 @@
 <% include partials/header %>
 
-<h1>ReadMe</h1>
+    <div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4"><i class="fab fa-readme"></i> ReadMe</h1>
+    <p class="lead">Read - Write -Think</p>
+  </div>
+</div>
 
-<% posts.forEach(function(post){ %>
-    <div>
-        <h3><%= post.title %></h3>
-        <img src="<%= post.image %>">
-        <h5> <%= post.created.toDateString() %></h5>
-        <p> <%= post.body.substring(0, 100) %>...</p>
-    </div>
-<% }); %>
+<div class="container">
+    <% posts.forEach(function(post){ %>
+      <div class="card border-secondary bg-light mb-3">
+        <img class="card-img-top" src="<%= post.image %>" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title"><%= post.title %></h5>
+            <p class="card-text"><%= post.body.substring(0, 100) %>...</p>
+            <p class="card-text"><small class="text-muted"><%= post.created.toDateString() %></small></p>
+            <a href="#" class="btn btn-secondary btn-sm btn-outline-dark">Read</a>
+        </div>
+      </div>
+    <% }); %>
+</div>
 
 <% include partials/footer %>
+
