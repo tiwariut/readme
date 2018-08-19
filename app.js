@@ -16,7 +16,13 @@ app.get("/", function(req, res) {
 
 //INDEX ROUTE
 app.get("/posts", function(req, res) {
-    res.render("index");
+    Post.find({}, function(err, allPosts){
+        if(err){
+            console.log(err);
+        } else{
+            res.render("index", {posts: allPosts});
+        }
+    });
 });
 
 app.listen(process.env.PORT, process.env.IP, function() {
