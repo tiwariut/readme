@@ -1,3 +1,5 @@
+<% include partials/header %>
+
 <h1>ReadMe</h1>
 
 <% posts.forEach(function(post){ %>
@@ -8,3 +10,5 @@
         <p> <%= post.body.substring(0, 100) %>...</p>
     </div>
 <% }); %>
+
+<% include partials/footer %>
