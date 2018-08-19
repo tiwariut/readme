@@ -48,6 +48,17 @@ app.post("/posts", function(req, res){
     });
 });
 
+//SHOW ROUTE
+app.get("/posts/:id", function(req, res) {
+    Post.findById(req.params.id, function(err, foundPost){
+        if(err){
+            console.log(err);
+        } else{
+            res.render("show", {post: foundPost});
+        }
+    });
+});
+
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("Server is running!");
 });
