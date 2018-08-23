@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 var Post = require("./models/post");
+var Comment = require("./models/comment");
 
 var data = [
     {
@@ -25,14 +26,33 @@ function seedDB(){
             console.log(err);
         } else{
             console.log("Removed all posts!");
-            data.forEach(function(seed){
-                Post.create(seed, function(err, newPost){
-                    if(err){
-                        console.log(err);
-                    } else{
-                        console.log("Created a new post!");
-                    }
-                });
+            Comment.remove({}, function(err){
+                if(err){
+                    console.log(err);
+                } else{
+                    console.log("Removed all comments")
+                    data.forEach(function(seed){
+                        Post.create(seed, function(err, newPost){
+                            if(err){
+                                console.log(err);
+                                } else{
+                                console.log("Created a new post!");
+                                Comment.create({
+                                    text: "Intellectual!",
+                                    author: "Drake"
+                                }, function(err, newComment){
+                                    if(err){
+                                        console.log(err);
+                                    } else{
+                                        newPost.comments.push(newComment);
+                                        newPost.save();
+                                        console.log("Created a new comment");
+                                    }
+                                });
+                            }
+                        });
+                    });
+                }
             });
         }
     });

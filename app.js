@@ -4,6 +4,7 @@ var express = require("express"),
     expressSanitizer = require("express-sanitizer"),
     methodOverride       = require("method-override"),
     Post = require("./models/post"),
+    Comment = require("./models/comment"),
     seedDB = require("./seeds"),
     app = express();
 
@@ -52,7 +53,7 @@ app.post("/posts", function(req, res){
 
 //SHOW ROUTE
 app.get("/posts/:id", function(req, res) {
-    Post.findById(req.params.id, function(err, foundPost){
+    Post.findById(req.params.id).populate("comments").exec(function(err, foundPost){
         if(err){
             console.log(err);
         } else{
