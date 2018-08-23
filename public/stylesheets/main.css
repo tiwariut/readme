@@ -34,3 +34,22 @@
 .delete-form{
     display: inline;
 }
+
+.comments{
+    padding: 10px;
+}
+
+.media{
+    margin-bottom: 15px;
+    background-color: white;
+    border: 1px solid rgb(0, 0, 67, 0.1);
+    padding: 8px;
+}
+
+.comments-button{
+    font-size: 11px;
+}
+
+.new-comment-button{
+    margin-bottom: 10px;
+}
