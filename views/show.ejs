@@ -22,6 +22,9 @@
                      <p><%= comment.text %></p>
                      <small><%= comment.author %></small>
                      <a href="/posts/<%= post._id %>/comments/<%= comment._id %>/edit">Edit</a>
+                     <form action="/posts/<%= post._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                         <button>Delete</button>
+                     </form>
                  </div>
             <% }); %>
         </div>

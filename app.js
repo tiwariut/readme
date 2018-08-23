@@ -163,6 +163,17 @@ app.put("/posts/:id/comments/:comment_id", function(req, res){
     });
 });
 
+//DESTROY ROUTE
+app.delete("/posts/:id/comments/:comment_id", function(req, res){
+    Comment.findByIdAndRemove(req.params.comment_id, function(err){
+        if(err){
+            console.log(err);
+        } else{
+            res.redirect("/posts/" + req.params.id);
+        }
+    });
+});
+
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("Server is running!");
 });
