@@ -21,6 +21,7 @@
                  <div class="container">
                      <p><%= comment.text %></p>
                      <small><%= comment.author %></small>
+                     <a href="/posts/<%= post._id %>/comments/<%= comment._id %>/edit">Edit</a>
                  </div>
             <% }); %>
         </div>

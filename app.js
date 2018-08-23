@@ -135,6 +135,34 @@ app.post("/posts/:id/comments", function(req, res){
     });
 });
 
+//EDIT ROUTE
+app.get("/posts/:id/comments/:comment_id/edit", function(req, res) {
+    Post.findById(req.params.id, function(err, foundPost) {
+        if(err){
+            console.log(err);
+        } else{
+            Comment.findById(req.params.comment_id, function(err, foundComment) {
+                if(err){
+                    console.log(err);
+                } else{
+                    res.render("comments/edit", {post: foundPost, comment: foundComment});
+                }
+            });
+        }
+    });
+});
+
+//UPDATE ROUTE
+app.put("/posts/:id/comments/:comment_id", function(req, res){
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
+        if(err){
+            console.log(err);
+        } else{
+            res.redirect("/posts/" + req.params.id);
+        }
+    });
+});
+
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("Server is running!");
 });
