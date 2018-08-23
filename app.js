@@ -23,6 +23,10 @@ app.get("/", function(req, res) {
     res.redirect("/posts");
 });
 
+//============
+//POSTS ROUTES
+//============
+
 //INDEX ROUTE
 app.get("/posts", function(req, res) {
     Post.find({}, function(err, allPosts){
@@ -92,6 +96,41 @@ app.delete("/posts/:id", function(req, res){
             console.log(err);
         } else{
             res.redirect("/posts");
+        }
+    });
+});
+
+//===============
+//COMMENTS ROUTES
+//===============
+
+
+//NEW ROUTE
+app.get("/posts/:id/comments/new", function(req, res){
+    Post.findById(req.params.id, function(err, foundPost) {
+        if(err){
+            console.log(err);
+        } else{
+            res.render("comments/new", {post: foundPost});
+        }
+    });
+});
+
+//CREATE ROUTE
+app.post("/posts/:id/comments", function(req, res){
+    Post.findById(req.params.id, function(err, foundPost){
+        if(err){
+            console.log(err);
+        } else{
+            Comment.create(req.body.comment, function(err, newComment){
+                if(err){
+                    console.log(err);
+                } else{
+                    foundPost.comments.push(newComment);
+                    foundPost.save();
+                    res.redirect("/posts/" + req.params.id);
+                }
+            });
         }
     });
 });

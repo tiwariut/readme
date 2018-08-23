@@ -1,0 +1,22 @@
+<% include ../partials/header %>
+<div class="container">
+    
+<h1 class="heading">New Comment</h1>
+
+<div class="container form">
+<form action="/posts/<%= post._id %>/comments" method="POST">
+  <div class="form-group">
+    <label for="text">Text</label>
+    <input type="text" class="form-control" id="text" name="comment[text]" placeholder="text">
+  </div>
+  <div class="form-group">
+    <label for="author">Author</label>
+    <input type="text" class="form-control" id="author" name="comment[author]" placeholder="author">
+  </div>
+  <button type="submit" class="btn btn-outline-success">Submit</button>
+</form>
+</div>
+
+</div>
+
+<% include ../partials/footer %>
