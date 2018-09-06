@@ -211,7 +211,7 @@ app.delete("/posts/:id/comments/:comment_id", checkCommentOwnership, function(re
 //REGISTER ROUTES
 
 app.get("/register", function(req,res){
-    res.render("register");
+    res.render("register", {page: "register"});
 });
 
 app.post("/register", function(req, res) {
@@ -230,7 +230,7 @@ app.post("/register", function(req, res) {
 //LOGIN ROUTES
 
 app.get("/login", function(req, res) {
-    res.render("login");
+    res.render("login", {page: "login"});
 });
 
 app.post("/login", passport.authenticate("local", {

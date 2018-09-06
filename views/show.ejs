@@ -10,10 +10,12 @@
             <p class="card-text"><%- post.body %></p>
             <strong>By <%= post.author.username %></strong>
             <p class="card-text"><small class="text-muted"><%= post.created.toDateString() %></small></p>
-            <a href="/posts/<%= post._id %>/edit" class="btn btn-outline-primary">Edit</a>
-            <form class="delete-form" action="/posts/<%= post._id%>?_method=DELETE" method="POST">
-                <button class="btn btn-outline-danger">Delete</button>
-            </form>
+            <% if(currentUser && post.author.id.equals(currentUser._id)){ %>
+                 <a href="/posts/<%= post._id %>/edit" class="btn btn-outline-primary">Edit</a>
+                 <form class="delete-form" action="/posts/<%= post._id%>?_method=DELETE" method="POST">
+                    <button class="btn btn-outline-danger">Delete</button>
+                 </form>
+            <% } %>
           </div>
       </div>
 </div>
@@ -28,12 +30,14 @@
            <div class="media-body">
               <h5 class="mt-0"><%= comment.author.username %></h5>
               <%= comment.text %>
-              <div>
+              <% if(currentUser && comment.author.id.equals(currentUser._id)){ %>
+                <div>
                   <a class="btn comments-button btn-sm btn-primary" href="/posts/<%= post._id %>/comments/<%= comment._id %>/edit">Edit</a>
                   <form class="delete-form" action="/posts/<%= post._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
                       <button class= "btn comments-button btn-sm btn-danger">Delete</button>
                   </form>
-              </div>
+                </div>
+              <% } %>
              </div>
         </div>
     <% }); %>
