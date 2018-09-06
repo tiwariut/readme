@@ -93,7 +93,7 @@ app.get("/posts/:id", function(req, res) {
 });
 
 //EDIT ROUTE
-app.get("/posts/:id/edit", function(req, res) {
+app.get("/posts/:id/edit", checkPostOwnership, function(req, res) {
     Post.findById(req.params.id, function(err, foundPost){
         if(err){
             console.log(err);
@@ -104,7 +104,7 @@ app.get("/posts/:id/edit", function(req, res) {
 });
 
 //UPDATE ROUTE
-app.put("/posts/:id", function(req, res){
+app.put("/posts/:id", checkPostOwnership, function(req, res){
     req.body.post.body = req.sanitize(req.body.post.body);
     Post.findByIdAndUpdate(req.params.id, req.body.post, function(err, updatedPost){
         if(err){
@@ -116,7 +116,7 @@ app.put("/posts/:id", function(req, res){
 });
 
 //DESTROY ROUTE
-app.delete("/posts/:id", function(req, res){
+app.delete("/posts/:id", checkPostOwnership, function(req, res){
     Post.findByIdAndRemove(req.params.id, function(err){
         if(err){
             console.log(err);
@@ -165,7 +165,7 @@ app.post("/posts/:id/comments", isLoggedIn, function(req, res){
 });
 
 //EDIT ROUTE
-app.get("/posts/:id/comments/:comment_id/edit", function(req, res) {
+app.get("/posts/:id/comments/:comment_id/edit", checkCommentOwnership, function(req, res) {
     Post.findById(req.params.id, function(err, foundPost) {
         if(err){
             console.log(err);
@@ -182,7 +182,7 @@ app.get("/posts/:id/comments/:comment_id/edit", function(req, res) {
 });
 
 //UPDATE ROUTE
-app.put("/posts/:id/comments/:comment_id", function(req, res){
+app.put("/posts/:id/comments/:comment_id", checkCommentOwnership, function(req, res){
     Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
         if(err){
             console.log(err);
@@ -193,7 +193,7 @@ app.put("/posts/:id/comments/:comment_id", function(req, res){
 });
 
 //DESTROY ROUTE
-app.delete("/posts/:id/comments/:comment_id", function(req, res){
+app.delete("/posts/:id/comments/:comment_id", checkCommentOwnership, function(req, res){
     Comment.findByIdAndRemove(req.params.comment_id, function(err){
         if(err){
             console.log(err);
@@ -252,6 +252,42 @@ function isLoggedIn(req, res, next){
         return next();
     } 
     res.redirect("/login");
+}
+
+function checkPostOwnership(req, res, next){
+    if(req.isAuthenticated()){
+        Post.findById(req.params.id, function(err, foundPost){
+            if(err || !foundPost){
+                res.redirect("back");
+            } else{
+                if(foundPost.author.id.equals(req.user._id)){
+                    next();
+                } else{
+                    res.redirect("back");
+                }
+            }
+        });
+    } else{
+        res.redirect("/login");
+    }
+}
+
+function checkCommentOwnership(req, res, next){
+    if(req.isAuthenticated()){
+        Comment.findById(req.params.comment_id, function(err, foundComment){
+            if(err || !foundComment){
+                res.redirect("back");
+            } else{
+                if(foundComment.author.id.equals(req.user._id)){
+                    next();
+                } else{
+                    res.redirect("back");
+                }
+            }
+        });
+    } else{
+        res.redirect("/login");
+    }
 }
 
 app.listen(process.env.PORT, process.env.IP, function() {
