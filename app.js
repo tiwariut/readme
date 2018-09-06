@@ -7,6 +7,7 @@ var express = require("express"),
     passport = require("passport"),
     LocalStrategy = require("passport-local"),
     passportLocalMongoose = require("passport-local-mongoose"),
+    flash = require("connect-flash"),
     Post = require("./models/post"),
     Comment = require("./models/comment"),
     User = require("./models/user"),
@@ -20,6 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressSanitizer());
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
+app.use(flash());
 
 //PASSPORT CONFIG
 app.use(session({
@@ -35,8 +37,10 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use(function(req, res, next) {
-res.locals.currentUser = req.user; 
-next();
+    res.locals.currentUser = req.user; 
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
 });
 
 //seedDB();
@@ -218,11 +222,12 @@ app.post("/register", function(req, res) {
     var newUser = new User({username: req.body.username});
     User.register(newUser, req.body.password, function(err, user){
         if(err){
-            console.log(err);
+            req.flash("error", err.message);
             return res.redirect("/register");
         }
         passport.authenticate("local")(req, res, function(){
-        res.redirect("/posts");
+            req.flash("success", "Welcome to ReadMe " + user.username + "!");
+            res.redirect("/posts");
         });
     });
 });
@@ -251,6 +256,7 @@ function isLoggedIn(req, res, next){
     if(req.isAuthenticated()){
         return next();
     } 
+    req.flash("error", "You need to be logged in to do that.");
     res.redirect("/login");
 }
 
@@ -258,16 +264,19 @@ function checkPostOwnership(req, res, next){
     if(req.isAuthenticated()){
         Post.findById(req.params.id, function(err, foundPost){
             if(err || !foundPost){
+                req.flash("error", "Post not found.");
                 res.redirect("back");
             } else{
                 if(foundPost.author.id.equals(req.user._id)){
                     next();
                 } else{
+                    req.flash("error", "You don't have permission to that.");
                     res.redirect("back");
                 }
             }
         });
     } else{
+        req.flash("error", "You need to be logged in to do that.");
         res.redirect("/login");
     }
 }
@@ -276,16 +285,19 @@ function checkCommentOwnership(req, res, next){
     if(req.isAuthenticated()){
         Comment.findById(req.params.comment_id, function(err, foundComment){
             if(err || !foundComment){
+                req.flash("error", "Comment not found.");
                 res.redirect("back");
             } else{
                 if(foundComment.author.id.equals(req.user._id)){
                     next();
                 } else{
+                    req.flash("error", "You don't have permission to that.");
                     res.redirect("back");
                 }
             }
         });
     } else{
+        req.flash("error", "You need to be logged in to do that.");
         res.redirect("/login");
     }
 }

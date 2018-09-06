@@ -58,3 +58,7 @@
 .authForm{
    max-width: 400px; 
 }
+
+.flashMessage{
+    margin-top: 70px;
+}
