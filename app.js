@@ -75,11 +75,14 @@ app.post("/posts", isLoggedIn, function(req, res){
     req.body.post.body = req.sanitize(req.body.post.body);
     Post.create(req.body.post, function(err, newPost){
         if(err){
+            req.flash("error", "Not able to create yout post.");
+            res.redirect("back");
             console.log(err);
         } else{
             newPost.author.id = req.user._id;
             newPost.author.username = req.user.username;
             newPost.save();
+            req.flash("success", "Added your post.");
             res.redirect("/posts");
         }
     });
@@ -89,6 +92,8 @@ app.post("/posts", isLoggedIn, function(req, res){
 app.get("/posts/:id", function(req, res) {
     Post.findById(req.params.id).populate("comments").exec(function(err, foundPost){
         if(err){
+            req.flash("error", "Post not found.");
+            res.redirect("back");
             console.log(err);
         } else{
             res.render("show", {post: foundPost});
@@ -100,6 +105,8 @@ app.get("/posts/:id", function(req, res) {
 app.get("/posts/:id/edit", checkPostOwnership, function(req, res) {
     Post.findById(req.params.id, function(err, foundPost){
         if(err){
+            req.flash("error", "Post not found.");
+            res.redirect("back");
             console.log(err);
         } else{
             res.render("edit", {post: foundPost});
@@ -112,8 +119,11 @@ app.put("/posts/:id", checkPostOwnership, function(req, res){
     req.body.post.body = req.sanitize(req.body.post.body);
     Post.findByIdAndUpdate(req.params.id, req.body.post, function(err, updatedPost){
         if(err){
+            req.flash("error", "Post not found.");
+            res.redirect("back");
             console.log(err);
         } else{
+            req.flash("success", "Updated yout post.");
             res.redirect("/posts/" + req.params.id);
         }
     });
@@ -123,8 +133,11 @@ app.put("/posts/:id", checkPostOwnership, function(req, res){
 app.delete("/posts/:id", checkPostOwnership, function(req, res){
     Post.findByIdAndRemove(req.params.id, function(err){
         if(err){
+            req.flash("error", "Post not found.");
+            res.redirect("back");
             console.log(err);
         } else{
+            req.flash("success", "Deleted your post.");
             res.redirect("/posts");
         }
     });
@@ -139,6 +152,8 @@ app.delete("/posts/:id", checkPostOwnership, function(req, res){
 app.get("/posts/:id/comments/new", isLoggedIn, function(req, res){
     Post.findById(req.params.id, function(err, foundPost) {
         if(err){
+            req.flash("error", "Post not found.");
+            res.redirect("back");
             console.log(err);
         } else{
             res.render("comments/new", {post: foundPost});
@@ -150,10 +165,14 @@ app.get("/posts/:id/comments/new", isLoggedIn, function(req, res){
 app.post("/posts/:id/comments", isLoggedIn, function(req, res){
     Post.findById(req.params.id, function(err, foundPost){
         if(err){
+            req.flash("error", "Post not found.");
+            res.redirect("back");
             console.log(err);
         } else{
             Comment.create(req.body.comment, function(err, newComment){
                 if(err){
+                    req.flash("error", "Not able to create your comment.");
+                    res.redirect("back");
                     console.log(err);
                 } else{
                     newComment.author.id = req.user._id;
@@ -172,10 +191,14 @@ app.post("/posts/:id/comments", isLoggedIn, function(req, res){
 app.get("/posts/:id/comments/:comment_id/edit", checkCommentOwnership, function(req, res) {
     Post.findById(req.params.id, function(err, foundPost) {
         if(err){
+            req.flash("error", "Post not found.");
+            res.redirect("back");
             console.log(err);
         } else{
             Comment.findById(req.params.comment_id, function(err, foundComment) {
                 if(err){
+                    req.flash("error", "Comment not found.");
+                    res.redirect("back");
                     console.log(err);
                 } else{
                     res.render("comments/edit", {post: foundPost, comment: foundComment});
@@ -189,6 +212,8 @@ app.get("/posts/:id/comments/:comment_id/edit", checkCommentOwnership, function(
 app.put("/posts/:id/comments/:comment_id", checkCommentOwnership, function(req, res){
     Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
         if(err){
+            req.flash("error", "Comment not found.");
+            res.redirect("back");
             console.log(err);
         } else{
             res.redirect("/posts/" + req.params.id);
@@ -200,6 +225,8 @@ app.put("/posts/:id/comments/:comment_id", checkCommentOwnership, function(req, 
 app.delete("/posts/:id/comments/:comment_id", checkCommentOwnership, function(req, res){
     Comment.findByIdAndRemove(req.params.comment_id, function(err){
         if(err){
+            req.flash("error", "Comment not found.");
+            res.redirect("back");
             console.log(err);
         } else{
             res.redirect("/posts/" + req.params.id);
@@ -222,6 +249,7 @@ app.post("/register", function(req, res) {
     var newUser = new User({username: req.body.username});
     User.register(newUser, req.body.password, function(err, user){
         if(err){
+            console.log(err);
             req.flash("error", err.message);
             return res.redirect("/register");
         }
@@ -266,6 +294,7 @@ function checkPostOwnership(req, res, next){
             if(err || !foundPost){
                 req.flash("error", "Post not found.");
                 res.redirect("back");
+                console.log(err);
             } else{
                 if(foundPost.author.id.equals(req.user._id)){
                     next();
@@ -287,6 +316,7 @@ function checkCommentOwnership(req, res, next){
             if(err || !foundComment){
                 req.flash("error", "Comment not found.");
                 res.redirect("back");
+                console.log(err);
             } else{
                 if(foundComment.author.id.equals(req.user._id)){
                     next();
