@@ -68,6 +68,9 @@ app.post("/posts", function(req, res){
         if(err){
             console.log(err);
         } else{
+            newPost.author.id = req.user._id;
+            newPost.author.username = req.user.username;
+            newPost.save();
             res.redirect("/posts");
         }
     });
@@ -144,6 +147,9 @@ app.post("/posts/:id/comments", function(req, res){
                 if(err){
                     console.log(err);
                 } else{
+                    newComment.author.id = req.user._id;
+                    newComment.author.username = req.user.username;
+                    newComment.save();
                     foundPost.comments.push(newComment);
                     foundPost.save();
                     res.redirect("/posts/" + req.params.id);
