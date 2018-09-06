@@ -22,7 +22,7 @@ app.use(expressSanitizer());
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.use(flash());
-app.locals.moment = require("moment");
+app.locals.moment = require("moment")
 
 //PASSPORT CONFIG
 app.use(session({
