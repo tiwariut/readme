@@ -76,7 +76,7 @@ app.post("/posts", isLoggedIn, function(req, res){
     req.body.post.body = req.sanitize(req.body.post.body);
     Post.create(req.body.post, function(err, newPost){
         if(err){
-            req.flash("error", "Not able to create yout post.");
+            req.flash("error", "Not able to create your post.");
             res.redirect("back");
             console.log(err);
         } else{
@@ -124,7 +124,7 @@ app.put("/posts/:id", checkPostOwnership, function(req, res){
             res.redirect("back");
             console.log(err);
         } else{
-            req.flash("success", "Updated yout post.");
+            req.flash("success", "Updated your post.");
             res.redirect("/posts/" + req.params.id);
         }
     });
@@ -248,6 +248,9 @@ app.get("/register", function(req,res){
 
 app.post("/register", function(req, res) {
     var newUser = new User({username: req.body.username});
+    if(req.body.adminCode === "justdoit"){
+        newUser.isAdmin = true;
+    }
     User.register(newUser, req.body.password, function(err, user){
         if(err){
             console.log(err);
@@ -297,7 +300,7 @@ function checkPostOwnership(req, res, next){
                 res.redirect("back");
                 console.log(err);
             } else{
-                if(foundPost.author.id.equals(req.user._id)){
+                if(foundPost.author.id.equals(req.user._id) || req.user.isAdmin){
                     next();
                 } else{
                     req.flash("error", "You don't have permission to that.");
@@ -319,7 +322,7 @@ function checkCommentOwnership(req, res, next){
                 res.redirect("back");
                 console.log(err);
             } else{
-                if(foundComment.author.id.equals(req.user._id)){
+                if(foundComment.author.id.equals(req.user._id) || req.user.isAdmin){
                     next();
                 } else{
                     req.flash("error", "You don't have permission to that.");

@@ -10,7 +10,7 @@
             <p class="card-text"><%- post.body %></p>
             <strong>By <%= post.author.username %></strong>
             <p class="card-text"><small class="text-muted"><%= moment(post.createdAt).fromNow() %></small></p>
-            <% if(currentUser && post.author.id.equals(currentUser._id)){ %>
+            <% if(currentUser && post.author.id.equals(currentUser._id) || currentUser && currentUser.isAdmin){ %>
                  <a href="/posts/<%= post._id %>/edit" class="btn btn-outline-warning">Edit</a>
                  <form class="delete-form" action="/posts/<%= post._id%>?_method=DELETE" method="POST">
                     <button class="btn btn-outline-danger">Delete</button>
@@ -87,7 +87,7 @@
       <p><%= comment.text %></p>
 
       <!--If the visitor is logged in and the owner of the comment, show the edit and delete buttons-->
-        <% if (currentUser && currentUser._id.equals(comment.author.id)) { %>
+        <% if (currentUser && currentUser._id.equals(comment.author.id) || currentUser && currentUser.isAdmin) { %>
         <!--Edit button used for collapsing the edit comment form-->
       <a class="btn comments-button btn-sm btn-warning" role="button" data-toggle="collapse" href="#collapseEdit<%= comment._id %>" aria-expanded="false" aria-controls="collapse<%= comment._id %>">
         Edit</a>
