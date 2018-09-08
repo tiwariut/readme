@@ -1,0 +1,45 @@
+<% include ../partials/header %>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <h3 class="card-title text-center" style="margin-top: 0.75rem;"><%= user.firstname + " " + user.lastname %></h3>
+            <img class="card-img-top" src="<%= user.avatar %>" alt="Card image cap">
+            <div class="card-body">
+                <div class="caption">Reach me at: <a href="mailto:<%= user.email %>"><%= user.email %></a></div>
+                <hr>
+                <h5 class="card-title text-center">About Me</h3>
+                <p class="card-text">Att vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium 
+                voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecat
+               i cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, 
+               id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. 
+               Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id 
+             quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
+              Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut
+              et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a
+             sapiente delectus, ut aut reiciendisvoluptatibus maiores alias consequatur aut perferendis 
+               doloribus asperiores repellat.</p>
+            </div>
+        </div>
+        
+    </div>
+  <div class="col-md-8">
+    <div class="card">
+    <h2 class="text-center" style="padding: 20px;"><%= user.username %>'s Posts</h2>
+    <% posts.forEach(function(post){ %>
+      <div class="rounded mx-auto d-block card border-secondary bg-light mb-3" style="width: 90%;">
+        <img class="card-img-top" src="<%= post.image %>">
+        <div class="card-body">
+            <h5 class="card-title"><%= post.title %></h5>
+            <p class="card-text"><%- post.body.substring(0, 200) %>...</p>
+            <p class="card-text"><small class="text-muted"><%= moment(post.createdAt).fromNow() %></small></p>
+            <a href="/posts/<%= post._id %>" class="btn btn-sm btn-outline-dark">Read</a>
+        </div>
+      </div>
+    <% }) %>
+    </div>
+  </div>
+</div>
+
+<% include ../partials/footer %>

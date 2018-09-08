@@ -13,7 +13,7 @@
 <div class="container index">
     <% posts.forEach(function(post){ %>
       <div class="card border-secondary bg-light mb-3">
-        <img class="card-img-top" src="<%= post.image %>" alt="Card image cap">
+        <img class="card-img-top" src="<%= post.image %>">
         <div class="card-body">
             <h5 class="card-title"><%= post.title %></h5>
             <p class="card-text"><%- post.body.substring(0, 200) %>...</p>

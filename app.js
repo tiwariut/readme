@@ -247,7 +247,14 @@ app.get("/register", function(req,res){
 });
 
 app.post("/register", function(req, res) {
-    var newUser = new User({username: req.body.username});
+    var newUser = new User(
+        {
+            username: req.body.username,
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            avatar : req.body.avatar,
+            email: req.body.email
+        });
     if(req.body.adminCode === "justdoit"){
         newUser.isAdmin = true;
     }
@@ -335,6 +342,28 @@ function checkCommentOwnership(req, res, next){
         res.redirect("/login");
     }
 }
+
+//USER PROFILE ROUTE
+
+app.get("/users/:id", function(req, res) {
+   User.findById(req.params.id, function(err, foundUser){
+       if(err){
+           req.flash("error", "User not found.");
+           res.redirect("back");
+           console.log(err);
+       } else{
+           Post.find().where("author.id").equals(foundUser._id).exec(function(err, posts){
+               if(err){
+                   req.flash("error", "Posts not found.");
+                   res.redirect("back");
+                   console.log(err);
+               } else{
+                   res.render("users/show", {user: foundUser, posts: posts});
+               }
+           });
+       }
+   }); 
+});
 
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("Server is running!");
