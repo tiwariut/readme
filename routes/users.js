@@ -4,7 +4,6 @@ var express = require("express"),
     User = require("../models/user");
 
 //USER PROFILE ROUTE
-
 router.get("/:id", function(req, res) {
    User.findById(req.params.id, function(err, foundUser){
        if(err){
