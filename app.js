@@ -12,6 +12,7 @@ var express = require("express"),
     Comment = require("./models/comment"),
     User = require("./models/user"),
     seedDB = require("./seeds"),
+    middleware = require("./middleware"),
     app = express();
 
 //APP CONFIG
@@ -61,18 +62,18 @@ app.get("/posts", function(req, res) {
         if(err){
             console.log(err);
         } else{
-            res.render("index", {posts: allPosts});
+            res.render("posts/index", {posts: allPosts});
         }
     });
 });
 
 //NEW ROUTE
-app.get("/posts/new", isLoggedIn, function(req, res){
-    res.render("new");
+app.get("/posts/new", middleware.isLoggedIn, function(req, res){
+    res.render("posts/new");
 });
 
 //CREATE ROUTE
-app.post("/posts", isLoggedIn, function(req, res){
+app.post("/posts", middleware.isLoggedIn, function(req, res){
     req.body.post.body = req.sanitize(req.body.post.body);
     Post.create(req.body.post, function(err, newPost){
         if(err){
@@ -97,26 +98,26 @@ app.get("/posts/:id", function(req, res) {
             res.redirect("back");
             console.log(err);
         } else{
-            res.render("show", {post: foundPost});
+            res.render("posts/show", {post: foundPost});
         }
     });
 });
 
 //EDIT ROUTE
-app.get("/posts/:id/edit", checkPostOwnership, function(req, res) {
+app.get("/posts/:id/edit", middleware.checkPostOwnership, function(req, res) {
     Post.findById(req.params.id, function(err, foundPost){
         if(err){
             req.flash("error", "Post not found.");
             res.redirect("back");
             console.log(err);
         } else{
-            res.render("edit", {post: foundPost});
+            res.render("posts/edit", {post: foundPost});
         }
     });
 });
 
 //UPDATE ROUTE
-app.put("/posts/:id", checkPostOwnership, function(req, res){
+app.put("/posts/:id", middleware.checkPostOwnership, function(req, res){
     req.body.post.body = req.sanitize(req.body.post.body);
     Post.findByIdAndUpdate(req.params.id, req.body.post, function(err, updatedPost){
         if(err){
@@ -131,7 +132,7 @@ app.put("/posts/:id", checkPostOwnership, function(req, res){
 });
 
 //DESTROY ROUTE
-app.delete("/posts/:id", checkPostOwnership, function(req, res){
+app.delete("/posts/:id", middleware.checkPostOwnership, function(req, res){
     Post.findByIdAndRemove(req.params.id, function(err){
         if(err){
             req.flash("error", "Post not found.");
@@ -150,7 +151,7 @@ app.delete("/posts/:id", checkPostOwnership, function(req, res){
 
 
 //NEW ROUTE
-app.get("/posts/:id/comments/new", isLoggedIn, function(req, res){
+app.get("/posts/:id/comments/new", middleware.isLoggedIn, function(req, res){
     Post.findById(req.params.id, function(err, foundPost) {
         if(err){
             req.flash("error", "Post not found.");
@@ -163,7 +164,7 @@ app.get("/posts/:id/comments/new", isLoggedIn, function(req, res){
 });
 
 //CREATE ROUTE
-app.post("/posts/:id/comments", isLoggedIn, function(req, res){
+app.post("/posts/:id/comments", middleware.isLoggedIn, function(req, res){
     Post.findById(req.params.id, function(err, foundPost){
         if(err){
             req.flash("error", "Post not found.");
@@ -189,7 +190,7 @@ app.post("/posts/:id/comments", isLoggedIn, function(req, res){
 });
 
 //EDIT ROUTE
-app.get("/posts/:id/comments/:comment_id/edit", checkCommentOwnership, function(req, res) {
+app.get("/posts/:id/comments/:comment_id/edit", middleware.checkCommentOwnership, function(req, res) {
     Post.findById(req.params.id, function(err, foundPost) {
         if(err){
             req.flash("error", "Post not found.");
@@ -210,7 +211,7 @@ app.get("/posts/:id/comments/:comment_id/edit", checkCommentOwnership, function(
 });
 
 //UPDATE ROUTE
-app.put("/posts/:id/comments/:comment_id", checkCommentOwnership, function(req, res){
+app.put("/posts/:id/comments/:comment_id", middleware.checkCommentOwnership, function(req, res){
     Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
         if(err){
             req.flash("error", "Comment not found.");
@@ -223,7 +224,7 @@ app.put("/posts/:id/comments/:comment_id", checkCommentOwnership, function(req, 
 });
 
 //DESTROY ROUTE
-app.delete("/posts/:id/comments/:comment_id", checkCommentOwnership, function(req, res){
+app.delete("/posts/:id/comments/:comment_id", middleware.checkCommentOwnership, function(req, res){
     Comment.findByIdAndRemove(req.params.comment_id, function(err){
         if(err){
             req.flash("error", "Comment not found.");
@@ -288,60 +289,6 @@ app.get("/logout", function(req, res) {
     req.logout();
     res.redirect("/posts");
 });
-
-//MIDDLEWARES
-
-function isLoggedIn(req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    } 
-    req.flash("error", "You need to be logged in to do that.");
-    res.redirect("/login");
-}
-
-function checkPostOwnership(req, res, next){
-    if(req.isAuthenticated()){
-        Post.findById(req.params.id, function(err, foundPost){
-            if(err || !foundPost){
-                req.flash("error", "Post not found.");
-                res.redirect("back");
-                console.log(err);
-            } else{
-                if(foundPost.author.id.equals(req.user._id) || req.user.isAdmin){
-                    next();
-                } else{
-                    req.flash("error", "You don't have permission to that.");
-                    res.redirect("back");
-                }
-            }
-        });
-    } else{
-        req.flash("error", "You need to be logged in to do that.");
-        res.redirect("/login");
-    }
-}
-
-function checkCommentOwnership(req, res, next){
-    if(req.isAuthenticated()){
-        Comment.findById(req.params.comment_id, function(err, foundComment){
-            if(err || !foundComment){
-                req.flash("error", "Comment not found.");
-                res.redirect("back");
-                console.log(err);
-            } else{
-                if(foundComment.author.id.equals(req.user._id) || req.user.isAdmin){
-                    next();
-                } else{
-                    req.flash("error", "You don't have permission to that.");
-                    res.redirect("back");
-                }
-            }
-        });
-    } else{
-        req.flash("error", "You need to be logged in to do that.");
-        res.redirect("/login");
-    }
-}
 
 //USER PROFILE ROUTE
 
