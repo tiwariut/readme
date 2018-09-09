@@ -17,7 +17,8 @@ var express = require("express"),
 
 //REQUIRING ROUTES
 
-var indexRoutes = require("./routes/index");
+var indexRoutes = require("./routes/index"),
+    userRoutes = require("./routes/users");
 
 //APP CONFIG
 app.set("view engine", "ejs");
@@ -51,7 +52,8 @@ app.use(function(req, res, next) {
 
 //seedDB();
 
-app.use(indexRoutes);
+app.use("/", indexRoutes);
+app.use("/users", userRoutes);
 
 //============
 //POSTS ROUTES
@@ -235,28 +237,6 @@ app.delete("/posts/:id/comments/:comment_id", middleware.checkCommentOwnership, 
             res.redirect("/posts/" + req.params.id);
         }
     });
-});
-
-//USER PROFILE ROUTE
-
-app.get("/users/:id", function(req, res) {
-   User.findById(req.params.id, function(err, foundUser){
-       if(err){
-           req.flash("error", "User not found.");
-           res.redirect("back");
-           console.log(err);
-       } else{
-           Post.find().where("author.id").equals(foundUser._id).exec(function(err, posts){
-               if(err){
-                   req.flash("error", "Posts not found.");
-                   res.redirect("back");
-                   console.log(err);
-               } else{
-                   res.render("users/show", {user: foundUser, posts: posts});
-               }
-           });
-       }
-   }); 
 });
 
 app.listen(process.env.PORT, process.env.IP, function() {
