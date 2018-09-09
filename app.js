@@ -12,9 +12,8 @@ var express = require("express"),
     Comment = require("./models/comment"),
     User = require("./models/user"),
     seedDB = require("./seeds"),
+    middleware = require("./middleware"),
     app = express();
-
-var indexRoutes = require("./routes/index");
 
 //APP CONFIG
 app.set("view engine", "ejs");
@@ -48,6 +47,11 @@ app.use(function(req, res, next) {
 
 //seedDB();
 
+//ROOT ROUTE
+app.get("/", function(req, res) {
+    res.redirect("/posts");
+});
+
 //============
 //POSTS ROUTES
 //============
@@ -64,12 +68,12 @@ app.get("/posts", function(req, res) {
 });
 
 //NEW ROUTE
-app.get("/posts/new", isLoggedIn, function(req, res){
+app.get("/posts/new", middleware.isLoggedIn, function(req, res){
     res.render("posts/new");
 });
 
 //CREATE ROUTE
-app.post("/posts", isLoggedIn, function(req, res){
+app.post("/posts", middleware.isLoggedIn, function(req, res){
     req.body.post.body = req.sanitize(req.body.post.body);
     Post.create(req.body.post, function(err, newPost){
         if(err){
@@ -100,7 +104,7 @@ app.get("/posts/:id", function(req, res) {
 });
 
 //EDIT ROUTE
-app.get("/posts/:id/edit", checkPostOwnership, function(req, res) {
+app.get("/posts/:id/edit", middleware.checkPostOwnership, function(req, res) {
     Post.findById(req.params.id, function(err, foundPost){
         if(err){
             req.flash("error", "Post not found.");
@@ -113,7 +117,7 @@ app.get("/posts/:id/edit", checkPostOwnership, function(req, res) {
 });
 
 //UPDATE ROUTE
-app.put("/posts/:id", checkPostOwnership, function(req, res){
+app.put("/posts/:id", middleware.checkPostOwnership, function(req, res){
     req.body.post.body = req.sanitize(req.body.post.body);
     Post.findByIdAndUpdate(req.params.id, req.body.post, function(err, updatedPost){
         if(err){
@@ -128,7 +132,7 @@ app.put("/posts/:id", checkPostOwnership, function(req, res){
 });
 
 //DESTROY ROUTE
-app.delete("/posts/:id", checkPostOwnership, function(req, res){
+app.delete("/posts/:id", middleware.checkPostOwnership, function(req, res){
     Post.findByIdAndRemove(req.params.id, function(err){
         if(err){
             req.flash("error", "Post not found.");
@@ -147,7 +151,7 @@ app.delete("/posts/:id", checkPostOwnership, function(req, res){
 
 
 //NEW ROUTE
-app.get("/posts/:id/comments/new", isLoggedIn, function(req, res){
+app.get("/posts/:id/comments/new", middleware.isLoggedIn, function(req, res){
     Post.findById(req.params.id, function(err, foundPost) {
         if(err){
             req.flash("error", "Post not found.");
@@ -160,7 +164,7 @@ app.get("/posts/:id/comments/new", isLoggedIn, function(req, res){
 });
 
 //CREATE ROUTE
-app.post("/posts/:id/comments", isLoggedIn, function(req, res){
+app.post("/posts/:id/comments", middleware.isLoggedIn, function(req, res){
     Post.findById(req.params.id, function(err, foundPost){
         if(err){
             req.flash("error", "Post not found.");
@@ -186,7 +190,7 @@ app.post("/posts/:id/comments", isLoggedIn, function(req, res){
 });
 
 //EDIT ROUTE
-app.get("/posts/:id/comments/:comment_id/edit", checkCommentOwnership, function(req, res) {
+app.get("/posts/:id/comments/:comment_id/edit", middleware.checkCommentOwnership, function(req, res) {
     Post.findById(req.params.id, function(err, foundPost) {
         if(err){
             req.flash("error", "Post not found.");
@@ -207,7 +211,7 @@ app.get("/posts/:id/comments/:comment_id/edit", checkCommentOwnership, function(
 });
 
 //UPDATE ROUTE
-app.put("/posts/:id/comments/:comment_id", checkCommentOwnership, function(req, res){
+app.put("/posts/:id/comments/:comment_id", middleware.checkCommentOwnership, function(req, res){
     Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
         if(err){
             req.flash("error", "Comment not found.");
@@ -220,7 +224,7 @@ app.put("/posts/:id/comments/:comment_id", checkCommentOwnership, function(req, 
 });
 
 //DESTROY ROUTE
-app.delete("/posts/:id/comments/:comment_id", checkCommentOwnership, function(req, res){
+app.delete("/posts/:id/comments/:comment_id", middleware.checkCommentOwnership, function(req, res){
     Comment.findByIdAndRemove(req.params.comment_id, function(err){
         if(err){
             req.flash("error", "Comment not found.");
@@ -232,59 +236,59 @@ app.delete("/posts/:id/comments/:comment_id", checkCommentOwnership, function(re
     });
 });
 
-//MIDDLEWARES
+//===========
+//AUTH ROUTES
+//===========
 
-function isLoggedIn(req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    } 
-    req.flash("error", "You need to be logged in to do that.");
-    res.redirect("/login");
-}
 
-function checkPostOwnership(req, res, next){
-    if(req.isAuthenticated()){
-        Post.findById(req.params.id, function(err, foundPost){
-            if(err || !foundPost){
-                req.flash("error", "Post not found.");
-                res.redirect("back");
-                console.log(err);
-            } else{
-                if(foundPost.author.id.equals(req.user._id) || req.user.isAdmin){
-                    next();
-                } else{
-                    req.flash("error", "You don't have permission to that.");
-                    res.redirect("back");
-                }
-            }
+//REGISTER ROUTES
+
+app.get("/register", function(req,res){
+    res.render("register", {page: "register"});
+});
+
+app.post("/register", function(req, res) {
+    var newUser = new User(
+        {
+            username: req.body.username,
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            avatar : req.body.avatar,
+            email: req.body.email
         });
-    } else{
-        req.flash("error", "You need to be logged in to do that.");
-        res.redirect("/login");
+    if(req.body.adminCode === "justdoit"){
+        newUser.isAdmin = true;
     }
-}
-
-function checkCommentOwnership(req, res, next){
-    if(req.isAuthenticated()){
-        Comment.findById(req.params.comment_id, function(err, foundComment){
-            if(err || !foundComment){
-                req.flash("error", "Comment not found.");
-                res.redirect("back");
-                console.log(err);
-            } else{
-                if(foundComment.author.id.equals(req.user._id) || req.user.isAdmin){
-                    next();
-                } else{
-                    req.flash("error", "You don't have permission to that.");
-                    res.redirect("back");
-                }
-            }
+    User.register(newUser, req.body.password, function(err, user){
+        if(err){
+            console.log(err);
+            req.flash("error", err.message);
+            return res.redirect("/register");
+        }
+        passport.authenticate("local")(req, res, function(){
+            req.flash("success", "Welcome to ReadMe " + user.username + "!");
+            res.redirect("/posts");
         });
-    } else{
-        req.flash("error", "You need to be logged in to do that.");
-        res.redirect("/login");
-    }
-}
+    });
+});
+
+//LOGIN ROUTES
+
+app.get("/login", function(req, res) {
+    res.render("login", {page: "login"});
+});
+
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/posts",
+    failureRedirect: "/login"
+}), function(req, res){});
+
+
+//LOGOUT ROUTE
+app.get("/logout", function(req, res) {
+    req.logout();
+    res.redirect("/posts");
+});
 
 //USER PROFILE ROUTE
 
