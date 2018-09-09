@@ -61,14 +61,14 @@ app.get("/posts", function(req, res) {
         if(err){
             console.log(err);
         } else{
-            res.render("index", {posts: allPosts});
+            res.render("posts/index", {posts: allPosts});
         }
     });
 });
 
 //NEW ROUTE
 app.get("/posts/new", isLoggedIn, function(req, res){
-    res.render("new");
+    res.render("posts/new");
 });
 
 //CREATE ROUTE
@@ -97,7 +97,7 @@ app.get("/posts/:id", function(req, res) {
             res.redirect("back");
             console.log(err);
         } else{
-            res.render("show", {post: foundPost});
+            res.render("posts/show", {post: foundPost});
         }
     });
 });
@@ -110,7 +110,7 @@ app.get("/posts/:id/edit", checkPostOwnership, function(req, res) {
             res.redirect("back");
             console.log(err);
         } else{
-            res.render("edit", {post: foundPost});
+            res.render("posts/edit", {post: foundPost});
         }
     });
 });
