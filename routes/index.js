@@ -1,5 +1,7 @@
 var express = require("express"),
-    router = express.Router();
+    router = express.Router(),
+    passport = require("passport"),
+    User = require("../models/user");
 
 //ROOT ROUTE
 router.get("/", function(req, res) {

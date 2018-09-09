@@ -15,6 +15,8 @@ var express = require("express"),
     middleware = require("./middleware"),
     app = express();
 
+//REQUIRING ROUTES
+
 var indexRoutes = require("./routes/index");
 
 //APP CONFIG
