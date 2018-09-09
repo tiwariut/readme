@@ -18,8 +18,6 @@ var express = require("express"),
 //REQUIRING ROUTES
 
 var indexRoutes = require("./routes/index");
-var postRoutes = require("./routes/posts");
-var userRoutes = require("./routes/users");
 
 //APP CONFIG
 app.set("view engine", "ejs");
@@ -54,12 +52,104 @@ app.use(function(req, res, next) {
 //seedDB();
 
 app.use(indexRoutes);
-app.use(postRoutes);
-app.use(userRoutes);
+
+//============
+//POSTS ROUTES
+//============
+
+//INDEX ROUTE
+app.get("/posts", function(req, res) {
+    Post.find({}, function(err, allPosts){
+        if(err){
+            console.log(err);
+        } else{
+            res.render("posts/index", {posts: allPosts});
+        }
+    });
+});
+
+//NEW ROUTE
+app.get("/posts/new", middleware.isLoggedIn, function(req, res){
+    res.render("posts/new");
+});
+
+//CREATE ROUTE
+app.post("/posts", middleware.isLoggedIn, function(req, res){
+    req.body.post.body = req.sanitize(req.body.post.body);
+    Post.create(req.body.post, function(err, newPost){
+        if(err){
+            req.flash("error", "Not able to create your post.");
+            res.redirect("back");
+            console.log(err);
+        } else{
+            newPost.author.id = req.user._id;
+            newPost.author.username = req.user.username;
+            newPost.save();
+            req.flash("success", "Added your post.");
+            res.redirect("/posts");
+        }
+    });
+});
+
+//SHOW ROUTE
+app.get("/posts/:id", function(req, res) {
+    Post.findById(req.params.id).populate("comments").exec(function(err, foundPost){
+        if(err){
+            req.flash("error", "Post not found.");
+            res.redirect("back");
+            console.log(err);
+        } else{
+            res.render("posts/show", {post: foundPost});
+        }
+    });
+});
+
+//EDIT ROUTE
+app.get("/posts/:id/edit", middleware.checkPostOwnership, function(req, res) {
+    Post.findById(req.params.id, function(err, foundPost){
+        if(err){
+            req.flash("error", "Post not found.");
+            res.redirect("back");
+            console.log(err);
+        } else{
+            res.render("posts/edit", {post: foundPost});
+        }
+    });
+});
+
+//UPDATE ROUTE
+app.put("/posts/:id", middleware.checkPostOwnership, function(req, res){
+    req.body.post.body = req.sanitize(req.body.post.body);
+    Post.findByIdAndUpdate(req.params.id, req.body.post, function(err, updatedPost){
+        if(err){
+            req.flash("error", "Post not found.");
+            res.redirect("back");
+            console.log(err);
+        } else{
+            req.flash("success", "Updated your post.");
+            res.redirect("/posts/" + req.params.id);
+        }
+    });
+});
+
+//DESTROY ROUTE
+app.delete("/posts/:id", middleware.checkPostOwnership, function(req, res){
+    Post.findByIdAndRemove(req.params.id, function(err){
+        if(err){
+            req.flash("error", "Post not found.");
+            res.redirect("back");
+            console.log(err);
+        } else{
+            req.flash("success", "Deleted your post.");
+            res.redirect("/posts");
+        }
+    });
+});
 
 //===============
 //COMMENTS ROUTES
 //===============
+
 
 //NEW ROUTE
 app.get("/posts/:id/comments/new", middleware.isLoggedIn, function(req, res){
@@ -145,6 +235,28 @@ app.delete("/posts/:id/comments/:comment_id", middleware.checkCommentOwnership, 
             res.redirect("/posts/" + req.params.id);
         }
     });
+});
+
+//USER PROFILE ROUTE
+
+app.get("/users/:id", function(req, res) {
+   User.findById(req.params.id, function(err, foundUser){
+       if(err){
+           req.flash("error", "User not found.");
+           res.redirect("back");
+           console.log(err);
+       } else{
+           Post.find().where("author.id").equals(foundUser._id).exec(function(err, posts){
+               if(err){
+                   req.flash("error", "Posts not found.");
+                   res.redirect("back");
+                   console.log(err);
+               } else{
+                   res.render("users/show", {user: foundUser, posts: posts});
+               }
+           });
+       }
+   }); 
 });
 
 app.listen(process.env.PORT, process.env.IP, function() {
