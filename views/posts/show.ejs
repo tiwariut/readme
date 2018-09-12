@@ -8,7 +8,7 @@
             <img class="card-img-top" src="<%= post.image %>" alt="Card image cap">
             <hr>
             <p class="card-text"><%- post.body %></p>
-            <strong>By <a href="/users/<%= post.author.id %>"><%= post.author.username %></a></strong>
+            <strong><a href="/users/<%= post.author.id %>"><img class="avatar" src="<%= post.author.avatar %>" alt="Avatar">By <%= post.author.username %></a></strong>
             <p class="card-text"><small class="text-muted"><%= moment(post.createdAt).fromNow() %></small></p>
             <% if(currentUser && post.author.id.equals(currentUser._id) || currentUser && currentUser.isAdmin){ %>
                  <a href="/posts/<%= post._id %>/edit" class="btn btn-outline-warning">Edit</a>
@@ -68,23 +68,17 @@
     <% post.comments.forEach(function(comment) { %>
   <div class="row">
     <div class="col-md-12">
-      <strong>
-          <% if (currentUser && currentUser._id.equals(comment.author.id)) { %>
-        <!--If the current user owns the comment, change the color of the user icon-->
-        <i  style="color: orange;"class="fas fa-user"></i>
-          <% } else { %>
-        <!--Else just display it black-->
-        <i class="fas fa-user"></i>
-          <% } %>
+      <strong><a href="/users/<%= comment.author.id %>">
+        <img class="avatar" src="<%= comment.author.avatar %>" alt="Avatar">
         <!--Print out the author username-->
           <%= comment.author.username %>
-      </strong>
+      </a></strong>
 
       <!--Show when the comment was made-->
       <span class="float-right"><%= moment(comment.createdAt).fromNow() %></span>
 
       <!--Printing the comment-->
-      <p><%= comment.text %></p>
+      <p style="margin-left: 54.5px;"><%= comment.text %></p>
 
       <!--If the visitor is logged in and the owner of the comment, show the edit and delete buttons-->
         <% if (currentUser && currentUser._id.equals(comment.author.id) || currentUser && currentUser.isAdmin) { %>

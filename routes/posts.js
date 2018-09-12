@@ -30,6 +30,7 @@ router.post("/", middleware.isLoggedIn, function(req, res){
         } else{
             newPost.author.id = req.user._id;
             newPost.author.username = req.user.username;
+            newPost.author.avatar = req.user.avatar;
             newPost.save();
             req.flash("success", "Added your post.");
             res.redirect("/posts");
