@@ -63,4 +63,5 @@ app.use("/posts/:id/comments", commentRoutes);
 //STARTING SERVER
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("Server is running!");
+    console.log(process.env.GMAILPW);
 });
