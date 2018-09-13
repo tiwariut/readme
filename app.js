@@ -60,7 +60,7 @@ app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 app.use("/posts/:id/comments", commentRoutes);
 
-//START SERVER
+//STARTING SERVER
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("Server is running!");
 });
