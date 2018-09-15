@@ -5,13 +5,28 @@ var express = require("express"),
 
 //INDEX ROUTE
 router.get("/", function(req, res) {
-    Post.find({}, function(err, allPosts){
-        if(err){
+    if(req.query.search){
+        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+        Post.find({title: regex}, function(err, allPosts){
+          if(err){
             console.log(err);
-        } else{
+          } else{
+              if(allPosts.length < 1){
+                  req.flash("error", "No posts match that query, please try again.");
+                  res.redirect("back");
+              }
             res.render("posts/index", {posts: allPosts});
-        }
-    });
+          }
+        });
+    } else{
+        Post.find({}, function(err, allPosts){
+          if(err){
+            console.log(err);
+          } else{
+            res.render("posts/index", {posts: allPosts});
+          }
+        });
+    }
 });
 
 //NEW ROUTE
@@ -94,3 +109,7 @@ router.delete("/:id", middleware.checkPostOwnership, function(req, res){
 });
 
 module.exports = router;
+
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}

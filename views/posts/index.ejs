@@ -1,11 +1,13 @@
 <% include ../partials/header %>
 
-    <div class="jumbotron jumbotron-fluid">
+<div class="jumbotron jumbotron-fluid">
   <div class="container">
     <h1 class="display-4"><i class="fab fa-readme"></i> ReadMe</h1>
     <p class="lead">Read - Write -Think</p>
     <% if(currentUser){ %>
+       <p>
         <a class="btn btn-dark btn-sm" href="/posts/new">New Post</a>
+       </p>
     <% } %>
   </div>
 </div>
