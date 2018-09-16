@@ -1,9 +1,10 @@
 var mongoose = require("mongoose");
 
 var postSchema = new mongoose.Schema({
-    title: "String",
-    image: "String",
-    body: "String",
+    title: { type: String,  required: true }, 
+    image: { type: String,  required: true }, 
+    body: { type: String,  required: true }, 
+    category: { type: String,  required: true }, 
     createdAt : { type: Date, default: Date.now },
     comments : [{
         type: mongoose.Schema.Types.ObjectId,

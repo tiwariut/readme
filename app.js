@@ -20,7 +20,8 @@ var express = require("express"),
 var indexRoutes = require("./routes/index"),
     userRoutes = require("./routes/users"),
     postRoutes = require("./routes/posts"),
-    commentRoutes = require("./routes/comments");
+    commentRoutes = require("./routes/comments"),
+    categoryRoutes = require("./routes/categories");
     
 
 //APP CONFIG
@@ -59,6 +60,7 @@ app.use("/", indexRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 app.use("/posts/:id/comments", commentRoutes);
+app.use("/", categoryRoutes);
 
 //STARTING SERVER
 app.listen(process.env.PORT, process.env.IP, function() {
