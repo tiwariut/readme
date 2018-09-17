@@ -48,7 +48,7 @@ router.post("/", middleware.isLoggedIn, function(req, res){
             newPost.author.avatar = req.user.avatar;
             newPost.save();
             req.flash("success", "Added your post.");
-            res.redirect("/posts");
+            res.redirect("/posts/" + newPost.id);
         }
     });
 });
