@@ -28,6 +28,36 @@
                 <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search posts..." aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
               </form>
+              
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item <%= typeof page !== "undefined" && page === "Music" ? "active": " "%>">
+                  <a class="nav-link" href="/music">Music</a>
+                </li>
+                <li class="nav-item <%= typeof page !== "undefined" && page === "Fashion" ? "active": " "%>">
+                  <a class="nav-link" href="/fashion">Fashion</a>
+                </li>
+                <li class="nav-item <%= typeof page !== "undefined" && page === "Car" ? "active": " "%>">
+                  <a class="nav-link" href="/car">Car</a>
+                </li>
+                <li class="nav-item  <%= typeof page !== "undefined" && page === "Travel" ? "active": " "%>">
+                  <a class="nav-link" href="/travel">Travel</a>
+                </li>
+                <li class="nav-item  <%= typeof page !== "undefined" && page === "Food" ? "active": " "%>">
+                  <a class="nav-link" href="/food">Food</a>
+                </li>
+                <li class="nav-item <%= typeof page !== "undefined" && page === "Movie" ? "active": " "%>">
+                  <a class="nav-link" href="/movie">Movie</a>
+                </li>
+                <li class="nav-item <%= typeof page !== "undefined" && page === "Health" ? "active": " "%>">
+                  <a class="nav-link" href="/health">Health</a>
+                </li>
+                <li class="nav-item <%= typeof page !== "undefined" && page === "Technology" ? "active": " "%>">
+                  <a class="nav-link" href="/technology">Technology</a>
+                </li>
+                <li class="nav-item <%= typeof page !== "undefined" && page === "Others" ? "active": " "%>">
+                  <a class="nav-link" href="/others">Others</a>
+                </li>
+              </ul>
             
         <ul class="navbar-nav ml-auto">
      
@@ -42,7 +72,7 @@
             </li>
           <% } else{ %>
             <li class="nav-item">
-                <a class="nav-link" href="#">Signed In As <%= currentUser.username %></a>
+                <a class="nav-link" href="/users/<%= currentUser.id %>">Signed In As <%= currentUser.username %></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/logout">Logout</a>

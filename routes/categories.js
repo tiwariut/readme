@@ -6,10 +6,15 @@ router.get("/music", function(req, res){
     Post.find({category: "Music"}, function(err, foundPosts){
         if(err){
             console.log(err);
-            req.flash("No posts found");
+            req.flash("No posts found.");
             res.redirect("back");
         } else{
-            res.render("posts/index", {posts: foundPosts});
+            if(foundPosts.length <1){
+                req.flash("error", "No posts yet.");
+                res.redirect("back");
+            } else{
+                res.render("posts/index", {posts: foundPosts, page: "Music"});
+            }
         }
     });
 });
@@ -18,10 +23,15 @@ router.get("/fashion", function(req, res){
     Post.find({category: "Fashion"}, function(err, foundPosts){
         if(err){
             console.log(err);
-            req.flash("No posts found");
+            req.flash("No posts found.");
             res.redirect("back");
         } else{
-            res.render("posts/index", {posts: foundPosts});
+            if(foundPosts.length <1){
+                req.flash("error", "No posts yet.");
+                res.redirect("back");
+            } else{
+                res.render("posts/index", {posts: foundPosts, page: "Fashion"});
+            }
         }
     });
 });
@@ -33,19 +43,12 @@ router.get("/car", function(req, res){
             req.flash("No posts found");
             res.redirect("back");
         } else{
-            res.render("posts/index", {posts: foundPosts});
-        }
-    });
-});
-
-router.get("/beauty", function(req, res){
-    Post.find({category: "Beauty"}, function(err, foundPosts){
-        if(err){
-            console.log(err);
-            req.flash("No posts found");
-            res.redirect("back");
-        } else{
-            res.render("posts/index", {posts: foundPosts});
+            if(foundPosts.length <1){
+                req.flash("error", "No posts yet.");
+                res.redirect("back");
+            } else{
+                res.render("posts/index", {posts: foundPosts, page: "Car"});
+            }
         }
     });
 });
@@ -57,7 +60,12 @@ router.get("/travel", function(req, res){
             req.flash("No posts found");
             res.redirect("back");
         } else{
-            res.render("posts/index", {posts: foundPosts});
+            if(foundPosts.length <1){
+                req.flash("error", "No posts yet.");
+                res.redirect("back");
+            } else{
+                res.render("posts/index", {posts: foundPosts, page: "Travel"});
+            }
         }
     });
 });
@@ -69,7 +77,12 @@ router.get("/food", function(req, res){
             req.flash("No posts found");
             res.redirect("back");
         } else{
-            res.render("posts/index", {posts: foundPosts});
+            if(foundPosts.length <1){
+                req.flash("error", "No posts yet.");
+                res.redirect("back");
+            } else{
+                res.render("posts/index", {posts: foundPosts, page: "Food"});
+            }
         }
     });
 });
@@ -81,7 +94,12 @@ router.get("/movie", function(req, res){
             req.flash("No posts found");
             res.redirect("back");
         } else{
-            res.render("posts/index", {posts: foundPosts});
+            if(foundPosts.length <1){
+                req.flash("error", "No posts yet.");
+                res.redirect("back");
+            } else{
+                res.render("posts/index", {posts: foundPosts, page: "Movie"});
+            }
         }
     });
 });
@@ -93,7 +111,12 @@ router.get("/health", function(req, res){
             req.flash("No posts found");
             res.redirect("back");
         } else{
-            res.render("posts/index", {posts: foundPosts});
+            if(foundPosts.length <1){
+                req.flash("error", "No posts yet.");
+                res.redirect("back");
+            } else{
+                res.render("posts/index", {posts: foundPosts, page: "Health"});
+            }
         }
     });
 });
@@ -105,7 +128,12 @@ router.get("/technology", function(req, res){
             req.flash("No posts found");
             res.redirect("back");
         } else{
-            res.render("posts/index", {posts: foundPosts});
+            if(foundPosts.length <1){
+                req.flash("error", "No posts yet.");
+                res.redirect("back");
+            } else{
+                res.render("posts/index", {posts: foundPosts, page: "Technology"});
+            }
         }
     });
 });
@@ -117,7 +145,12 @@ router.get("/others", function(req, res){
             req.flash("No posts found");
             res.redirect("back");
         } else{
-            res.render("posts/index", {posts: foundPosts});
+            if(foundPosts.length <1){
+                req.flash("error", "No posts yet.");
+                res.redirect("back");
+            } else{
+                res.render("posts/index", {posts: foundPosts, page: "Others"});
+            }
         }
     });
 });
