@@ -17,14 +17,14 @@
   </head>
   <body>
     
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="/posts"><i class="fab fa-readme"></i> ReadMe</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                 <form action="/posts" method="GET" class="form-inline my-2 my-lg-0">
+              <form action="/posts" method="GET" class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search posts..." aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
               </form>
@@ -58,30 +58,27 @@
                   <a class="nav-link" href="/others">Others</a>
                 </li>
               </ul>
-            
-        <ul class="navbar-nav ml-auto">
-     
-          
-          <% if(!currentUser){ %>
-            <li class="nav-item <%= typeof page !== "undefined" && page === "login" ? "active": " "%>">
               
-                <a class="nav-link" href="/login">Login</a>
-            </li>
-            <li class="nav-item <%= typeof page !== "undefined" && page === "register" ? "active" : "" %>">
-                <a class="nav-link" href="/register">Sign Up</a>
-            </li>
-          <% } else{ %>
-            <li class="nav-item">
-                <a class="nav-link" href="/users/<%= currentUser.id %>">Signed In As <%= currentUser.username %></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/logout">Logout</a>
-            </li>
-          <% } %>
-        </ul>
-      </div>
+              <ul class="navbar-nav ml-auto">
+                <% if(!currentUser){ %>
+                   <li class="nav-item <%= typeof page !== "undefined" && page === "login" ? "active": " "%>">
+                      <a class="nav-link" href="/login">Login</a>
+                   </li>
+                   <li class="nav-item <%= typeof page !== "undefined" && page === "register" ? "active" : "" %>">
+                      <a class="nav-link" href="/register">Sign Up</a>
+                   </li>
+                <% } else{ %>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/users/<%= currentUser.id %>">Signed In As <%= currentUser.username %></a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/logout">Logout</a>
+                  </li>
+                <% } %>
+              </ul>
+          </div>
     </nav>
-    
+
     <div class="container flashMessage">
       <% if(error && error.length > 0){ %>
         <div class="alert alert-danger" role="alert">

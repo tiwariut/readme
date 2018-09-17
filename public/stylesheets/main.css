@@ -1,7 +1,6 @@
 .jumbotron{
     padding: 20px;
     text-align: center;
-    margin-top: 57px;
 }
 
 .wrapper {
@@ -14,17 +13,12 @@
 }
 
 .heading {
-    margin-top: 90px;
     text-align: center;
     margin-bottom: 20px;
 }
 
 .form{
     max-width: 700px;
-}
-
-.show{
-    margin-top: 70px;
 }
 
 .index{
@@ -59,7 +53,7 @@
 }
 
 .flashMessage{
-    margin-top: 70px;
+    margin-top: 20px;
 }
 
 .avatar{
